@@ -1,0 +1,26 @@
+{
+  "name": "aqa_tests_playwright",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test:ui": "npx playwright test",
+    "ui-mode": "npx playwright test --ui"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlexejBond/aqa_tests_playwright.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/AlexejBond/aqa_tests_playwright/issues"
+  },
+  "homepage": "https://github.com/AlexejBond/aqa_tests_playwright#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^24.8.1"
+  }
+}
