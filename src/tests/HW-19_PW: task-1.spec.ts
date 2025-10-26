@@ -31,13 +31,23 @@ const locators = {
     passwordInput: "#password",
     submitButton: "#submit",
     successMessage: "#successMessage",
+    errorMessage: "#errorMessage",
   },
 };
 
-const messages = {
-  successRegister:
-    "Successfully registered! Please, click Back to return on login page",
-};
+
+enum NOTIFICATIONS {
+  SuccessRegister = "Successfully registered! Please, click Back to return on login page",
+  ShortPassword = "Password should contain at least 8 characters",
+  ShortUsername = "Username should contain at least 3 characters",
+  EmptyPassword = "Password is required",
+  EmptyUsername = "Username is required",
+  InvalidCredentials = "Invalid credentials",
+  BanSpaces = "Prefix and postfix spaces are not allowed is username",
+  PasswordMissUppercase = "Password should contain at least one character in upper case",
+  PasswordMissLowercase = "Password should contain at least one character in lower case",
+  
+}
 
 const testData = {
   validUsername: "Alex",
@@ -78,7 +88,7 @@ test.describe("Smoke tests for Registration and Login", () => {
     await test.step("Register with valid data", async () => {
       await registerUser(page, testData.validUsername, testData.validPassword);
       await expect(page.locator(locators.register.message))
-        .toHaveText(messages.successRegister);
+        .toHaveText(NOTIFICATIONS.SuccessRegister);
     });
   });
 
@@ -88,7 +98,7 @@ test.describe("Smoke tests for Registration and Login", () => {
     await test.step("Register new user", async () => {
       await registerUser(page, testData.validUsername, testData.validPassword);
       await expect(page.locator(locators.register.message))
-        .toHaveText(messages.successRegister);
+        .toHaveText(NOTIFICATIONS.SuccessRegister);
     });
 
     await test.step("Log in with registered user", async () => {
@@ -102,60 +112,60 @@ test.describe("Smoke tests for Registration and Login", () => {
   test("Registration should fail if username is shorter than 3 characters", async ({ page }) => {
     await registerUser(page, testData.shortUsername, testData.validPassword);
     await expect(page.locator(locators.register.message))
-      .not.toHaveText(messages.successRegister);
+      .not.toHaveText(NOTIFICATIONS.SuccessRegister);
   });
 
   test("Registration should fail with password shorter than 8 characters", async ({ page }) => {
     await registerUser(page, testData.validUsername, testData.weakPassword);
     await expect(page.locator(locators.register.message))
-      .not.toHaveText(messages.successRegister);
+      .not.toHaveText(NOTIFICATIONS.SuccessRegister);
   });
 
   // test("Registration should fail if username is longer than 40 characters", async ({ page }) => {
   //   await registerUser(page, testData.tooLongUsername, testData.validPassword);
   //   await expect(page.locator(locators.register.message))
-  //     .not.toHaveText(messages.successRegister);
+  //     .not.toHaveText(NOTIFICATIONS.SuccessRegister);
   // });
 
   // test("Registration should fail if password is longer than 20 characters", async ({ page }) => {
   //   await registerUser(page, testData.validUsername, testData.tooLongPassword);
   //   await expect(page.locator(locators.register.message))
-  //     .not.toHaveText(messages.successRegister);
+  //     .not.toHaveText(NOTIFICATIONS.SuccessRegister);
   // });
 
   test("Registration should fail with username containing only spaces", async ({ page }) => {
     await registerUser(page, testData.spaceUsername, testData.validPassword);
     await expect(page.locator(locators.register.message))
-      .not.toHaveText(messages.successRegister);
+      .not.toHaveText(NOTIFICATIONS.SuccessRegister);
   });
 
   test("Registration should fail with password containing only spaces", async ({ page }) => {
     await registerUser(page, testData.validUsername, testData.spacePassword);
     await expect(page.locator(locators.register.message))
-      .not.toHaveText(messages.successRegister);
+      .not.toHaveText(NOTIFICATIONS.SuccessRegister);
   });
 
   test("Registration should fail when username has leading/trailing spaces", async ({ page }) => {
     await registerUser(page, testData.usernameWithSpaces, testData.validPassword);
     await expect(page.locator(locators.register.message))
-      .not.toHaveText(messages.successRegister);
+      .not.toHaveText(NOTIFICATIONS.SuccessRegister);
   });
 
   test("Login should fail without username", async ({ page }) => {
     await loginUser(page, "", testData.validPassword);
-    await expect(page.locator(locators.login.successMessage))
-      .not.toHaveText(/MEssage/);
+    await expect(page.locator(locators.login.errorMessage))
+      .toHaveText(NOTIFICATIONS.EmptyUsername);
   });
 
   test("Login should fail without password", async ({ page }) => {
     await loginUser(page, testData.validUsername, "");
-    await expect(page.locator(locators.login.successMessage))
-      .not.toHaveText(/MEssage/);
+    await expect(page.locator(locators.login.errorMessage))
+      .toHaveText(NOTIFICATIONS.EmptyPassword);
   });
 
   test("Login should fail with invalid credentials", async ({ page }) => {
     await loginUser(page, testData.tooLongUsername, testData.tooLongPassword);
-    await expect(page.locator(locators.login.successMessage))
-      .not.toHaveText(/Hello/);
+    await expect(page.locator(locators.login.errorMessage))
+      .toHaveText(NOTIFICATIONS.InvalidCredentials);
   });
 });
